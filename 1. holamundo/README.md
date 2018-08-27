@@ -1,27 +1,37 @@
-# Holamundo
+# Fundamentos
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.8.
+## Estructura del proyecto.
+El contenido del proyecto se encontrará en la carpeta `src`.
+En el archivo `index.html` se puede observar que hay un selector `<app-root></app-root>`, este selector sirve para indicar que en esa parte del html se va a insertar un código html de un componente.
 
-## Development server
+Los componentes estan en la carpeta `src/app`.
+En `app.component.ts` se declara el componente, aquí se puede ver lo siguiente:
+```typescript=
+import { Component } from '@angular/core';
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  title = 'app';
+}
+```
+* selector: indicará como se utilizara este componente en el html.
+* templateUrl: El html que pertenece al componente, lo que se va a insertar en la página cuando se utilice el selector.
+* styleUrls: el css a utilizar en el templateUrl.
 
-## Code scaffolding
+En `class` se va a definir la lógica del componente, ya sea atributos, métodos etc.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Componentes
 
-## Build
+### ¿Cómo mostrar el contenido de un atributo en el html del componente?
+Los atributos van a estar dentro de la class respectiva, por ejemplo:
+```=typescript
+export class NombreComponent{
+    nombre:string = "Eduardo";
+}
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+Si se desea mostrar esta variable en el html del componente se utiliza `{{nombre}}`
+```
