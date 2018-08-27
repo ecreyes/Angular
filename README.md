@@ -18,3 +18,9 @@ Version Typescript:
 ```shell
 tsc -v
 ```
+
+## Creación del proyecto.
+```shell
+ng new my-app #crea una aplicación con AngularCli
+ng serve #monta el servidor
+```
