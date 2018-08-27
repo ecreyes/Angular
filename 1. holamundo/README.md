@@ -58,6 +58,14 @@ export class AppModule { }
 
 ## Componentes
 
+Crear componentes desde terminal:
+```shell
+ng g c nombreComponente
+```
+El comando significa `ng generate component nombreComponente`, tambien se podría dar una ubicacion `carpeta/nombreComponente`
+Este comando crea los archivos de css,html,ts,spec y actualiza el app.module con el componente.
+
+
 ### ¿Cómo mostrar el contenido de un atributo en el html del componente?
 Los atributos van a estar dentro de la class respectiva, por ejemplo:
 ```=typescript
