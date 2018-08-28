@@ -12,7 +12,7 @@ ng g c components/home
 ## Rutas
 Las rutas servirán para navegar entre diferentes componentes o páginas sin refrescar el navegador web.
 En la carpeta raiz de `app` hay que crear un archivo llamado `app.routes.ts` con el siguiente código:
-```typescript=
+```typescript
 //se importa el router
 import { Routes, RouterModule } from '@angular/router';
 //se importa un componente a utilizar
@@ -32,13 +32,13 @@ const APP_ROUTES: Routes = [
 export const APP_ROUTING = RouterModule.forRoot(APP_ROUTES);
 ```
 Luego de crear este archivo se debe importar en el `app.module.ts`
-```typescript=
+```typescript
 import { APP_ROUTING } from "./app.routes";
 ```
 y en la sección imports colocar `APP_ROUTING`.
 
 Para configurar las rutas de la aplicación deberemos crear una etiqueta `<router-outlet></router-outlet>`en el `app.component.html` donde queramos que se carguen las páginas que pidamos:
-```typescript=
+```typescript
 <app-navbar></app-navbar>
 <div class="container">
   <router-outlet></router-outlet>
@@ -47,11 +47,11 @@ Para configurar las rutas de la aplicación deberemos crear una etiqueta `<route
 
 ## RouterLink y RouterLinkActive
 El RouterLink reemplaza al href del html:
-```html
+```typescript
 <a class="nav-link" [routerLink]="['home']">Home</a>
 ```
 El RouterLinkActive permite saber cual es la ruta activa, se coloca en un bloque padre de los links:
-```htmlmixed
+```typescript
 <li class="nav-item" routerLinkActive="active">
     <a class="nav-link" [routerLink]="['home']">Home</a>
 </li>
@@ -60,3 +60,27 @@ El RouterLinkActive permite saber cual es la ruta activa, se coloca en un bloque
 El `routerLink` va a recibir un arreglo que van a ser los parametros, por ejemplo si la ruta es /hola/1/2 deberia asignare ['hola','1','2'], estos nombres de la ruta vienen por el path del `app.routes.ts`
 
 El `routerLinkActve` permite agregar algun parámetro a la class cuando la ruta está activa.
+
+## Servicios
+Se debe crear una carpeta `services` en `app` y crear un servicio de la forma `nombreservicio.service.ts`,
+dentro de este archivo debe ir lo siguiente:
+```typescript
+import { Injectable } from '@angular/core';
+
+@Injectable()
+export class NombreService {
+    constructor(){
+        console.log("servicio listo para usar!");
+    }
+}
+```
+Con esto el servicio esta creado pero aun no se utiliza.
+Los servicios son utilizados por `componentes` por lo que tienen que ser importados en el `component.ts` que desee usar el servicio.
+```typescript
+import { NombreService } from "path";
+```
+Luego de estar importado se tiene que usar,ya sea en el constructor() o en el ngOnInit() de la forma:
+```typescript
+constructor(private _nombreService: NombreService)
+```
+El constructor se ejecutará primero que el ngOnInit().
