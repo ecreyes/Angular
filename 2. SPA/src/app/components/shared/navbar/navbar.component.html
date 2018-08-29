@@ -26,9 +26,9 @@
         </div>
       </li>
     </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-dark my-2 my-sm-0" type="submit">Search</button>
-    </form>
+    <div class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="search" placeholder="Buscar Ninja" aria-label="Buscar" (keyup.enter)="buscarNinja(Input.value)" #Input>
+      <button class="btn btn-dark my-2 my-sm-0" type="button" (click)="buscarNinja(Input.value)">Buscar</button>
+    </div>
   </div>
 </nav>

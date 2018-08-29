@@ -1,7 +1,7 @@
-<h1>Ninjas <small>del mundo de Naruto</small></h1>
+<h1>Resultado al buscar: <small>{{texto}}</small></h1>
 <hr>
 
-<div class="card-columns">
+<div class="card-columns" *ngIf="ninjas.length>0">
   <div class="card animated fadeIn fast" *ngFor="let ninja of ninjas">
     <img class="card-img-top" src="{{ninja.img}}" alt={{ninja.nombre}}} height="500" width="250">
     <div class="card-body">
@@ -11,4 +11,8 @@
       <a [routerLink]="['/ninja',ninja.id]" class="btn btn-outline-dark btn-block">Ver más</a>
     </div>
   </div>
+</div>
+
+<div *ngIf="ninjas.length==0">
+  <p>No hay resultados</p>
 </div>

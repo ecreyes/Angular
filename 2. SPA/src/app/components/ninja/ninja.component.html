@@ -1,0 +1,19 @@
+<h1 class="animated fadeIn">{{ninja.nombre | uppercase}} <small>({{ninja.aparicion}})</small></h1>
+<div class="row animated fadeIn fast">
+  <div class="col-md-4">
+    <img src={{ninja.img}} class="img-fluid" alt={{ninja.nombre}} width="250" height="500">
+    <br><br>
+    <a [routerLink]="['/ninjas']" class="btn btn-outline-danger btn-block">Regresar</a>
+  </div>
+  <div class="col-md-8">
+    <h3>{{ninja.nombre}}</h3>
+    <hr>
+    <p>
+      {{ninja.bio}}
+    </p>
+    <div>
+      <img *ngIf="ninja.casa=='Konoha'" src="assets/img/konoha.png" alt={{ninja.casa}} class="img-logo" width="200" height="200">
+      <img *ngIf="ninja.casa=='Akatsuki'" src="assets/img/akatsuki.png" alt={{ninja.casa}} class="img-logo" width="200" height="200">
+    </div>
+  </div>
+</div>
