@@ -92,6 +92,13 @@ let texto:string = `hola,${nombre} ${apellido}, su edad es: ${edad}`;
 ```
 La ventaja de usar el `${}` es que permite ejecutar código dentro, podria utilizar un getNombe() y funcionaría, o hacer un 1+1.
 
+## Foreach
+```typescript
+for(let i of data){
+  console.log(i);
+}
+```
+
 ## Funciones.
 Recomendación, usar funciones de flecha.
 ```typescript
