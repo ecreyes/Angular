@@ -266,3 +266,19 @@ const APP_ROUTES: Routes = [
 ];
 ```
 Bastante fácil.
+
+## Obtener parámetros del padre desde rutas Hijas.
+En el componente Hijo se debe importar
+```typescript
+import { ActivatedRoute } from "@angular/router";
+```
+Ahora se asigna en el constructor:
+```typescript
+constructor(private _activatedRoute:ActivatedRoute)
+```
+Hasta aquí estaba todo igual que antes, ahora viene la diferencia (el parent):
+```typescript
+    _activatedRoute.parent.params.subscribe(params =>{
+      console.log(params);
+    });
+```
