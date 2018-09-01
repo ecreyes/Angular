@@ -7,7 +7,7 @@ import { NinjasService } from "../../services/ninjas.service";
   templateUrl: './ninja.component.html'
 })
 export class NinjaComponent implements OnInit {
-  private ninja:any = {};
+  public ninja:any = {};
   constructor(private _activatedRoute: ActivatedRoute,
     private _ninjasService: NinjasService) {
     _activatedRoute.params.subscribe(params => {
