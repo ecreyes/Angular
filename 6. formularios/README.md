@@ -157,3 +157,315 @@ required
   Por lo menos {{nombre.errors.minlength.requiredLength}} caracteres.
 </div>
 ```
+
+## Data
+Aquí la idea es no sobre cargar el html con código, sino que ir utilizando el código en el component.ts
+Para empezar a trabajar hay que importar lo siguiente en el component:
+```typescript
+import { FormGroup,FormControl,Validators } from "@angular/forms";
+```
+En el `app.module.ts` hay que importar lo siguiente:
+```typescript
+import { FormsModule,ReactiveFormsModule } from "@angular/forms";
+
+imports: [
+  BrowserModule,
+  FormsModule,
+  ReactiveFormsModule
+],
+```
+
+Ahora en el `data.component.ts` se debe crear un atributo para manejar el formulario y en el constructor se define toda la lógica:
+```typescript
+forma:FormGroup;
+
+constructor() {
+  this.forma = new FormGroup({
+    'nombre': new FormControl('Eduardo'),
+    'apellido': new FormControl(),
+    'correo': new FormControl()
+  });
+}
+
+guardarCambios(){
+  console.log(this.forma);
+  console.log(this.forma.value);
+}
+
+
+```
+Los parámetros del FormGroup son:
+* new FormGroup(valor a colocar en el input,[validaciones1,validaciones2],[validaciones asincronas,as2])
+
+Ahora para vincular lo que se escribió en el component con el html, hay que colocar:
+```typescript
+<form [formGroup]="forma" (ngSubmit)="guardarCambios()">
+```
+
+### Enlazando el input a propiedades del formGroup y validaciones.
+Hay que agregar el atributo `formControlName` que se debe llamar igual a los campos de `this.forma`, por ejemplo para el input del nombre:
+```typescript
+<div class="form-group row">
+  <label class="col-2 col-form-label">Nombre</label>
+  <div class="col-8">
+    <input 
+    type="text" 
+    class="form-control" 
+    placeholder="Nombre"
+    formControlName = "nombre"
+    >
+  </div>
+</div>
+```
+Ahora agregando validaciones:
+```typescript
+  constructor() {
+    this.forma = new FormGroup({
+      'nombre': new FormControl('',Validators.required),
+      'apellido': new FormControl('',Validators.required),
+      'correo': new FormControl('',[Validators.required,Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$")])
+    });
+  }
+```
+ahora mostrando en el html(debajo del button):
+```typescript
+{{forma.valid}}
+```
+
+agregando validaciones con bootstrap4:
+```typescript
+    <div class="form-group row">
+      <label class="col-2 col-form-label">Nombre</label>
+      <div class="col-8">
+        <input 
+        type="text" 
+        class="form-control" 
+        [ngClass]="{'is-invalid': !forma.controls.nombre.valid && forma.controls.nombre.touched,'is-valid':forma.controls.nombre.valid}"
+        placeholder="Nombre"
+        formControlName = "nombre"
+        >
+        <div *ngIf="forma.controls.nombre.errors?.required" class="invalid-feedback">
+          El nombre es necesario
+        </div>
+        <div *ngIf="forma.controls.nombre.errors?.minlength" class="invalid-feedback">
+          Como mínimo 5 carácteres
+        </div>
+      </div>
+    </div>
+```
+
+### Agrupaciones de los objetos FormGroupName.
+Hasta ahora el json que entrega el formulario es el del tipo:
+```typescript
+{
+  nombre:"valor",
+  apellido:"valor",
+  correo:"valor"
+}
+```
+Pero supongamos que queremos recibir los datos del formulario en el siguiente formato json:
+```typescript
+{
+  nombrecompleto:{
+    nombre:"valor",
+    apellido:"valor"
+  },
+  correo:"valor"
+}
+```
+Para esto seria util usar el FormGroupName, donde agrupariamos el nombre y apellido dentro del nombre completo y el correo quedaria de forma independiente.
+
+¿Cómo se hace?
+Supongamos que este es el objeto en el componente:
+```typescript
+  usuario:any = {
+    nombrecompleto:{
+      nombre:"ragzer",
+      apellido:"rtcw"
+    },
+    correo:"test@gmail.com"
+  }
+```
+Lo primero que hay que hacer, es modificar en el constructor la asignacion del this.forma para que quede de forma similar al objeto usuario:
+```typescript
+constructor() {
+  this.forma = new FormGroup({
+    'nombrecompleto':new FormGroup({
+      'nombre': new FormControl('',[Validators.required,Validators.minLength(5)]),
+      'apellido': new FormControl('',Validators.required)
+    }),
+    'correo': new FormControl('',[Validators.required,Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$")])
+  });
+}
+```
+Ahora en el formulario hay que agrupar los campos, en este caso nombre y apellido, dentro de un mismo div con la siguiente propiedad:
+```typescript
+<div formGroupName="nombrecompleto">
+    //div del nombre...
+
+    //div del apellido...
+</div>
+```
+Al hacer esto va a generar un error si es que hay validaciones... lo mejor será comentarlas para ver si quedo bien.
+
+Ahora revisando el console.log generado se puede observar que se creó otro campo FormGroup que es `nombrecompleto` y a su vez este tiene en sus controls `nombre` y `apellido`.
+
+Para arreglar los errores de las validaciones hay que cambiar las variables... por ejemplo:
+Antes:
+```typescript
+<div *ngIf="forma.controls.nombre.errors?.required">
+  El nombre es necesario.
+</div>
+```
+Después:
+```typescript
+<div *ngIf="forma.controls.nombrecompleto.controls.nombre.errors?.required">
+    El nombre es necesario.
+</div>
+```
+Quedo bastante largo, pero se puede arreglar con el método get que accede a los controls:
+```typescript
+<div *ngIf="forma.get('nombrecompleto.nombre').errors?.required">
+    El nombre es necesario.
+</div>
+```
+Quedando mucho mejor :)
+
+### DataReset y Carga de datos en el formulario.
+Supongamos que se quiere editar una seccion y aparece un formulario, algo tipico como `localhost:4200/ver/3` por dar un ejemplo, y cargaria en el formulario los datos del id 3.
+
+En resumen para cargar los datos de forma rapida al form, es pasar un objeto que sea de la misma estructura que el formulario.
+
+supongamos que se tiene:
+```typescript
+  forma:FormGroup;
+  usuario:any = {
+    nombrecompleto:{
+      nombre:"ragzer",
+      apellido:"rtcw"
+    },
+    correo:"test@gmail.com"
+  }
+
+  constructor() {
+    this.forma = new FormGroup({
+      'nombrecompleto':new FormGroup({
+        'nombre': new FormControl('',[Validators.required,Validators.minLength(5)]),
+        'apellido': new FormControl('',Validators.required)
+      }),
+      'correo': new FormControl('',[Validators.required,Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$")])
+    });
+  }
+```
+Y se quiere cargar los datos del objeto usuario en el formulario, primero hay que ver q el formulario y el objeto son de la misma forma, asi que todo anda bien.
+Ahora solo hay que agregar en el constructor:
+```typescript
+  constructor() {
+    this.forma = new FormGroup({
+      'nombrecompleto':new FormGroup({
+        'nombre': new FormControl('',[Validators.required,Validators.minLength(5)]),
+        'apellido': new FormControl('',Validators.required)
+      }),
+      'correo': new FormControl('',[Validators.required,Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$")])
+    });
+    this.forma.setValue(this.usuario);
+  }
+```
+bastante fácil y bonito.
+
+Ahora supongamos que al guardar los datos, ya se editaron correctamente y se quiere mostrar el formulario vacio pero como si recien se hubiera creado, es decir con todos los ng por default, esto se hace con:
+```typescript
+  guardarCambios(){
+    console.log(this.forma);
+    console.log(this.forma.value);
+
+    this.forma.reset({
+      nombrecompleto:{
+        nombre:"",
+        apellido:""
+      },
+      correo:""
+    });
+  }
+```
+El reset va a recibir un objeto de la misma forma del formulario pero hay que dejarlo en vacio, obviamente.
+
+### Validaciones personalizadas.
+Un ejemplo de hacer una validación es el siguiente:
+```typescript
+noHerrera(control:FormControl):{[s:string]:boolean}{
+  if(control.value === "herrera"){
+    return {noherrera:true};
+  }else{
+    return null;
+  }
+}
+```
+El ejemplo es bastante básico pero ilustrativo, ahora solo hay que agregarlo al campo de apellido:
+```typescript
+constructor() {
+  this.forma = new FormGroup({
+    'nombrecompleto':new FormGroup({
+      'nombre': new FormControl('',[Validators.required,Validators.minLength(5)]),
+      'apellido': new FormControl('',[Validators.required,this.noHerrera])
+    }),
+    'correo': new FormControl('',[Validators.required,Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$")])
+  });
+  this.forma.setValue(this.usuario);
+}
+```
+Para ver los cambios habria que comentar el this.forma.reset en el guardar cambios.
+
+Caso complicado, comparar dos password sean iguales:
+```typescript
+constructor() {
+  this.forma = new FormGroup({
+    'nombrecompleto':new FormGroup({
+      'nombre': new FormControl('',[Validators.required,Validators.minLength(5)]),
+      'apellido': new FormControl('',[Validators.required,this.noHerrera])
+    }),
+    'correo': new FormControl('',[Validators.required,Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$")]),
+    'password1':new FormControl('',Validators.required),
+    'password2':new FormControl('')
+  });
+
+  this.forma.controls['password2'].setValidators([Validators.required,this.passwordiguales.bind(this.forma)]);
+  //this.forma.setValue(this.usuario);
+}
+
+
+
+
+  passwordiguales(control:FormControl):{[s:string]:boolean}{
+    let forma:any = this;
+    if(control.value !== forma.controls['password1'].value){
+      return {passwordiguales:true};
+    }
+    return null;
+  }
+```
+
+### Validaciones asincronas.
+Primero hay que importar el observable:
+```typescript
+import { Observable } from 'rxjs';
+```
+Supongamos el caso del usuario:
+```typescript
+'usuario': new FormControl('',Validators.required,this.existeUsuario),
+```
+Ahora la funcion:
+```typescript
+existeUsuario(control:FormControl):Promise<any>|Observable<any>{
+  let promesa = new Promise(
+    (resolve,reject)=>{
+      setTimeout(()=>{
+        if(control.value==="ragzer"){
+          resolve({existe:true});
+        }else{
+          resolve(null);
+        }
+      },3000);
+    }
+  );
+```
