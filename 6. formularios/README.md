@@ -2,6 +2,7 @@
 Pueden ser de dos tipos:
 * Template
 * Data
+
 Para empezar hay que importar en el `app.module.ts`:
 ```typescript
 import { FormsModule } from "@angular/forms";
